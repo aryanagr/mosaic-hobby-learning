@@ -19,6 +19,7 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
+  overflow-y: auto;
 }
 .brand {
   display: flex;
@@ -531,13 +532,14 @@ article.active .card {
     transform: translateY(12px);
   }
 }
-@media (max-width: 760px) {
+/* Mobile and portrait-tablet navigation */
+@media (max-width: 900px) {
   .app-shell > aside {
     display: none;
   }
   main {
     margin: 0;
-    padding-bottom: 65px;
+    padding-bottom: calc(65px + env(safe-area-inset-bottom));
   }
   main > header {
     display: flex;
@@ -557,11 +559,11 @@ article.active .card {
   }
   .hero {
     min-height: auto;
-    padding: 49px 24px 38px;
+    padding: 49px clamp(24px, 7vw, 64px) 38px;
     display: block;
   }
   .hero h1 {
-    font-size: 43px;
+    font-size: clamp(43px, 8vw, 62px);
   }
   .hero h1 br {
     display: none;
@@ -570,7 +572,7 @@ article.active .card {
     display: none;
   }
   .stats {
-    padding: 18px 20px;
+    padding: 18px clamp(20px, 7vw, 64px);
     gap: 16px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -581,7 +583,8 @@ article.active .card {
     display: none;
   }
   .path {
-    padding: 39px 18px 80px;
+    padding: 39px clamp(18px, 7vw, 64px) 80px;
+    max-width: none;
   }
   .path-head h2 {
     font-size: 27px;
@@ -603,7 +606,8 @@ article.active .card {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
     background: #fff;
     border-top: 1px solid var(--line);
     z-index: 20;
@@ -637,7 +641,8 @@ article.active .card {
     text-align: center;
   }
 }
-@media (min-width: 761px) and (max-width: 1050px) {
+/* Landscape tablets and compact desktops */
+@media (min-width: 901px) and (max-width: 1180px) {
   .app-shell > aside {
     width: 210px;
     padding-inline: 18px;
@@ -808,7 +813,7 @@ article.active .card {
   padding: 0 20px 24px;
   font-size: 9px;
 }
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .actions {
     flex-wrap: wrap;
   }
@@ -838,5 +843,10 @@ article.active .card {
   }
   .generate {
     grid-column: auto;
+  }
+}
+@media (max-width: 520px) {
+  .actions .lab-button {
+    width: 100%;
   }
 }
