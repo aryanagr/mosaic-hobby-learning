@@ -9,7 +9,13 @@ test.beforeEach(async ({ page }) => {
     .getByLabel("Email")
     .fill(`learner-${crypto.randomUUID()}@example.com`);
   await page.getByLabel("Password").fill("strong-password");
+  const personalizedPlan = page.waitForResponse(
+    (response) =>
+      response.url().includes("/api/plans") &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: /Create my path/ }).click();
+  await personalizedPlan;
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
@@ -47,7 +53,17 @@ test("opens a lesson and records mastery", async ({ page }) => {
 
   await dialog.getByRole("button", { name: /Mark as mastered/ }).click();
   await expect(page.getByRole("status")).toContainText("mastered");
-  await expect(dialog).toBeHidden();
+  const celebration = page.getByRole("dialog", {
+    name: /First sprout/,
+  });
+  await expect(celebration).toBeVisible();
+  await expect(celebration).toContainText("+120 XP");
+  await celebration.getByRole("button", { name: /Keep learning/ }).click();
+  await expect(celebration).toBeHidden();
+  await expect(
+    page.getByRole("heading", { name: /Level 1 learner/ }),
+  ).toBeVisible();
+  await expect(page.getByText("120 XP", { exact: true })).toBeVisible();
 });
 
 test("generates a new path through the local API", async ({ page }) => {

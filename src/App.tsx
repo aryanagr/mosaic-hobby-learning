@@ -29,6 +29,13 @@ import {
   type AuthUser,
 } from "./features/auth/auth-api";
 import { createLearningPlan } from "./services/plans-api";
+import { AchievementShelf } from "./features/gamification/AchievementShelf";
+import { Celebration } from "./features/gamification/Celebration";
+import {
+  calculateGamification,
+  findNewAchievement,
+  type Achievement,
+} from "./features/gamification/gamification";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -40,6 +47,8 @@ export default function App() {
   const [notice, setNotice] = useState("");
   const [user, setUser] = useState<AuthUser | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [celebration, setCelebration] = useState<Achievement | null>(null);
+  const gamification = calculateGamification(plan.techniques);
 
   useEffect(() => {
     void getCurrentUser().then((currentUser) => {
@@ -54,8 +63,17 @@ export default function App() {
   };
   const changeStatus = (status: TechniqueStatus) => {
     if (!selected) return;
+    const before = calculateGamification(plan.techniques);
+    const nextTechniques = plan.techniques.map((technique) =>
+      technique.id === selected.id ? { ...technique, status } : technique,
+    );
+    const earned = findNewAchievement(
+      before,
+      calculateGamification(nextTechniques),
+    );
     dispatch(updateTechniqueStatus({ id: selected.id, status }));
     setSelected(null);
+    if (earned) setCelebration(earned);
     showNotice(
       status === "done"
         ? "Technique mastered — nice work."
@@ -107,6 +125,7 @@ export default function App() {
         mastered={metrics.mastered}
         total={metrics.visible.length}
       />
+      <AchievementShelf progress={gamification} />
       <LearningPath
         techniques={metrics.visible}
         skipped={metrics.skipped}
@@ -131,6 +150,12 @@ export default function App() {
         <div className="toast" role="status">
           {notice}
         </div>
+      )}
+      {celebration && (
+        <Celebration
+          achievement={celebration}
+          onClose={() => setCelebration(null)}
+        />
       )}
     </AppShell>
   );

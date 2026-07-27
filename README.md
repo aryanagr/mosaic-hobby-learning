@@ -20,7 +20,11 @@ The frontend is a React, Redux Toolkit, and TypeScript single-page application o
 App
 ├── Dashboard
 │   ├── Goal hero
-│   └── Progress summary
+│   ├── Progress summary
+│   └── Gamification
+│       ├── XP and levels
+│       ├── Milestone badges
+│       └── Completion celebration
 ├── Learning path
 │   ├── Technique cards
 │   └── Progress calculations
@@ -40,6 +44,8 @@ Responsibilities:
 - Typed React-Redux hooks prevent untyped dispatches or selectors.
 - Memoized Redux selectors derive progress and the current active technique.
 - Progress percentage, mastered count, visible techniques, and skipped count are derived from the plan rather than stored as duplicate state.
+- Gamification is derived from the same progress source of truth: each mastered technique earns 120 XP, completing a path earns a 300 XP bonus, and milestones unlock at the first technique, third technique, and full-path completion.
+- Newly earned milestones open an accessible celebration dialog with responsive confetti; `prefers-reduced-motion` disables nonessential animation.
 - The complete plan is persisted locally, so its title, promise, techniques, and progress remain consistent after reload.
 
 Frontend request flow:

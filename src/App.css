@@ -260,6 +260,326 @@ main > header,
   padding: 21px clamp(42px, 6vw, 96px);
   gap: 30px;
 }
+
+.rewards {
+  padding: 34px clamp(42px, 6vw, 96px);
+  background: #f7f3e9;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.8fr);
+  gap: 30px;
+}
+.reward-level {
+  padding: 22px;
+  border-radius: 18px;
+  background: #25241f;
+  color: white;
+  align-self: stretch;
+}
+.reward-level > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 12px;
+}
+.reward-level .kicker {
+  color: #aaa79e;
+}
+.reward-level h2 {
+  margin: 7px 0 18px;
+  font: 28px "Instrument Serif";
+}
+.reward-level > strong {
+  color: var(--lime);
+  font-size: 13px;
+}
+.xp-track {
+  height: 7px;
+  margin: 12px 0 8px;
+  border-radius: 99px;
+  background: #45443d;
+  overflow: hidden;
+}
+.xp-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--lime);
+  transition: width 600ms ease;
+}
+.reward-level small {
+  color: #aaa79e;
+  font-size: 10px;
+}
+.badges {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.badges article {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #ddd7c9;
+  background: var(--paper);
+  border-radius: 17px;
+  display: grid;
+  align-content: start;
+  gap: 11px;
+}
+.badges article > span {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: #eee9df;
+  font-size: 21px;
+}
+.badges article strong,
+.badges article small {
+  display: block;
+}
+.badges article strong {
+  font-size: 12px;
+}
+.badges article small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+.badges article b {
+  margin-top: auto;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #969188;
+}
+.badges .earned {
+  border-color: #cfe25d;
+  box-shadow: 0 7px 22px rgba(83, 91, 39, 0.08);
+}
+.badges .earned > span {
+  background: #eff8bc;
+  animation: badge-pop 500ms ease both;
+}
+.badges .earned b {
+  color: #66751d;
+}
+.badges .locked {
+  opacity: 0.58;
+}
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: rgba(24, 23, 19, 0.72);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+.celebration > section {
+  position: relative;
+  z-index: 2;
+  width: min(420px, 100%);
+  padding: 38px;
+  border-radius: 24px;
+  background: var(--paper);
+  text-align: center;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+  animation: celebration-in 520ms cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+}
+.celebration-icon {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 26px 14px;
+  background: var(--lime);
+  font-size: 42px;
+  transform: rotate(-3deg);
+}
+.celebration h2 {
+  margin: 9px 0;
+  font: 42px/1 "Instrument Serif";
+}
+.celebration section > p:not(.kicker) {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.celebration section > strong {
+  display: block;
+  margin: 20px 0;
+  color: var(--purple);
+  font-size: 18px;
+}
+.celebration button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.confetti i {
+  --x: 50vw;
+  position: absolute;
+  top: -8%;
+  left: var(--x);
+  width: 9px;
+  height: 17px;
+  background: var(--lime);
+  animation: confetti-fall 2.4s ease-in infinite;
+  transform: rotate(18deg);
+}
+.confetti i:nth-child(3n) {
+  background: var(--purple);
+  border-radius: 50%;
+}
+.confetti i:nth-child(3n + 1) {
+  background: #ee967b;
+}
+.confetti i:nth-child(1) {
+  --x: 5vw;
+  animation-delay: -0.4s;
+}
+.confetti i:nth-child(2) {
+  --x: 11vw;
+  animation-delay: -1.7s;
+}
+.confetti i:nth-child(3) {
+  --x: 17vw;
+  animation-delay: -0.8s;
+}
+.confetti i:nth-child(4) {
+  --x: 23vw;
+  animation-delay: -2s;
+}
+.confetti i:nth-child(5) {
+  --x: 29vw;
+  animation-delay: -0.1s;
+}
+.confetti i:nth-child(6) {
+  --x: 35vw;
+  animation-delay: -1.2s;
+}
+.confetti i:nth-child(7) {
+  --x: 41vw;
+  animation-delay: -0.6s;
+}
+.confetti i:nth-child(8) {
+  --x: 47vw;
+  animation-delay: -1.9s;
+}
+.confetti i:nth-child(9) {
+  --x: 53vw;
+  animation-delay: -0.3s;
+}
+.confetti i:nth-child(10) {
+  --x: 59vw;
+  animation-delay: -1.5s;
+}
+.confetti i:nth-child(11) {
+  --x: 65vw;
+  animation-delay: -0.9s;
+}
+.confetti i:nth-child(12) {
+  --x: 71vw;
+  animation-delay: -2.2s;
+}
+.confetti i:nth-child(13) {
+  --x: 77vw;
+  animation-delay: -0.2s;
+}
+.confetti i:nth-child(14) {
+  --x: 83vw;
+  animation-delay: -1.3s;
+}
+.confetti i:nth-child(15) {
+  --x: 89vw;
+  animation-delay: -0.7s;
+}
+.confetti i:nth-child(16) {
+  --x: 95vw;
+  animation-delay: -2.1s;
+}
+.confetti i:nth-child(17) {
+  --x: 32vw;
+  animation-delay: -1s;
+}
+.confetti i:nth-child(18) {
+  --x: 68vw;
+  animation-delay: -1.8s;
+}
+@keyframes badge-pop {
+  from {
+    transform: scale(0.65) rotate(-8deg);
+  }
+  to {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes celebration-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes confetti-fall {
+  to {
+    transform: translate3d(30px, 112vh, 0) rotate(540deg);
+  }
+}
+
+@media (max-width: 1050px) {
+  .rewards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .rewards {
+    padding: 26px 22px;
+    gap: 18px;
+  }
+  .badges {
+    grid-template-columns: 1fr;
+  }
+  .badges article {
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    padding: 13px;
+  }
+  .badges article b {
+    margin: 0;
+  }
+  .celebration > section {
+    padding: 30px 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .celebration > section,
+  .badges .earned > span,
+  .xp-track i {
+    animation: none;
+    transition: none;
+  }
+}
 .stats > div {
   display: flex;
   gap: 12px;
