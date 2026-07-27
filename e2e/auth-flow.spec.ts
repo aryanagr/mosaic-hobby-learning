@@ -22,7 +22,7 @@ test("signs up with personalized answers, signs out, and signs back in", async (
   const compact = (page.viewportSize()?.width ?? 0) <= 900;
   if (compact) await page.getByRole("button", { name: "Sign out" }).click();
   else await page.getByTitle("Sign out").click();
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("tab", { name: "Sign in" }).click();
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill("strong-password");
   await page.getByRole("button", { name: /Sign in →/ }).click();

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type {
   LearningPlan,
   Technique,
@@ -8,8 +8,6 @@ import { AppShell } from "./components/AppShell";
 import { Hero } from "./features/dashboard/Hero";
 import { ProgressSummary } from "./features/dashboard/ProgressSummary";
 import { LearningPath } from "./features/learning-path/LearningPath";
-import { LessonSheet } from "./features/lesson/LessonSheet";
-import { PathStudio } from "./features/path-studio/PathStudio";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import {
   replacePlan,
@@ -31,12 +29,35 @@ import {
 import { createLearningPlan } from "./services/plans-api";
 import { Loader } from "./components/Loader";
 import { AchievementShelf } from "./features/gamification/AchievementShelf";
-import { Celebration } from "./features/gamification/Celebration";
 import {
   calculateGamification,
   findNewAchievement,
   type Achievement,
 } from "./features/gamification/gamification";
+
+const LessonSheet = lazy(() =>
+  import("./features/lesson/LessonSheet").then((module) => ({
+    default: module.LessonSheet,
+  })),
+);
+const PathStudio = lazy(() =>
+  import("./features/path-studio/PathStudio").then((module) => ({
+    default: module.PathStudio,
+  })),
+);
+const Celebration = lazy(() =>
+  import("./features/gamification/Celebration").then((module) => ({
+    default: module.Celebration,
+  })),
+);
+
+function DeferredOverlay({ label }: { label: string }) {
+  return (
+    <div className="backdrop deferred-loader" aria-live="polite">
+      <Loader size="large" label={label} />
+    </div>
+  );
+}
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -138,18 +159,22 @@ export default function App() {
         onRestore={() => dispatch(restoreSeedPlan())}
       />
       {studioOpen && (
-        <PathStudio
-          onClose={() => setStudioOpen(false)}
-          onCreated={acceptPlan}
-          onError={showNotice}
-        />
+        <Suspense fallback={<DeferredOverlay label="Opening Path Studio…" />}>
+          <PathStudio
+            onClose={() => setStudioOpen(false)}
+            onCreated={acceptPlan}
+            onError={showNotice}
+          />
+        </Suspense>
       )}{" "}
       {selected && (
-        <LessonSheet
-          technique={selected}
-          onClose={() => setSelected(null)}
-          onStatusChange={changeStatus}
-        />
+        <Suspense fallback={<DeferredOverlay label="Opening lesson…" />}>
+          <LessonSheet
+            technique={selected}
+            onClose={() => setSelected(null)}
+            onStatusChange={changeStatus}
+          />
+        </Suspense>
       )}{" "}
       {notice && (
         <div className="toast" role="status">
@@ -157,10 +182,12 @@ export default function App() {
         </div>
       )}
       {celebration && (
-        <Celebration
-          achievement={celebration}
-          onClose={() => setCelebration(null)}
-        />
+        <Suspense fallback={null}>
+          <Celebration
+            achievement={celebration}
+            onClose={() => setCelebration(null)}
+          />
+        </Suspense>
       )}
     </AppShell>
   );

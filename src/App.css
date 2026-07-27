@@ -299,6 +299,8 @@ main > header,
 }
 
 .rewards {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 390px;
   padding: 34px clamp(42px, 6vw, 96px);
   background: #f7f3e9;
   border-bottom: 1px solid var(--line);
@@ -652,8 +654,15 @@ main > header,
   margin-top: 3px;
 }
 .path {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
   padding: 57px clamp(42px, 6vw, 96px) 100px;
   max-width: 1240px;
+}
+.deferred-loader {
+  display: grid;
+  place-items: center;
+  color: white;
 }
 .path-head {
   display: flex;

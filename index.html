@@ -3,16 +3,81 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://mosaic-hobby-learning.vercel.app/" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      onload="
+        this.onload = null;
+        this.rel = 'stylesheet';
+      "
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"
+      />
+    </noscript>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#23231f" />
+    <meta name="color-scheme" content="light" />
+    <meta name="robots" content="index, follow" />
     <meta
       name="description"
-      content="SkillSprout creates a focused path to grow the hobby skills you love."
+      content="SkillSprout creates a personalized, focused learning path that turns any hobby goal into practical skills, milestones, and visible progress."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SkillSprout" />
+    <meta
+      property="og:title"
+      content="SkillSprout — grow one skill at a time"
+    />
+    <meta
+      property="og:description"
+      content="Personalized hobby learning paths without the information overload."
+    />
+    <meta
+      property="og:url"
+      content="https://mosaic-hobby-learning.vercel.app/"
+    />
+    <meta name="twitter:card" content="summary" />
+    <meta
+      name="twitter:title"
+      content="SkillSprout — grow one skill at a time"
+    />
+    <meta
+      name="twitter:description"
+      content="Personalized hobby learning paths without the information overload."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SkillSprout",
+        "url": "https://mosaic-hobby-learning.vercel.app/",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Web",
+        "description": "Personalized hobby learning paths with focused techniques, progress tracking, and milestone rewards.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
     <title>SkillSprout — grow one skill at a time</title>
+    <style>
+      #root:empty {
+        min-height: 100vh;
+        background: #23231f;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <noscript
+      >SkillSprout requires JavaScript to build and track your personalized
+      hobby learning path.</noscript
+    >
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

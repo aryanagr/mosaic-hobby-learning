@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mosaic-hobby-learning.vercel.app/sitemap.xml

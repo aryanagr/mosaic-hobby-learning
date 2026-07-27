@@ -39,13 +39,14 @@ export function createAuthRouter(service: AuthService) {
   router.get("/me", async (request, response) => {
     const token = readCookie(request);
     if (!token) {
-      response.status(401).json({ error: { code: "UNAUTHENTICATED" } });
+      response.json({ user: null });
       return;
     }
     try {
       response.json({ user: await service.readSession(token) });
     } catch {
-      response.status(401).json({ error: { code: "INVALID_SESSION" } });
+      response.clearCookie(cookieName, { path: "/" });
+      response.json({ user: null });
     }
   });
   return router;

@@ -71,12 +71,18 @@ export function AuthScreen({
         <div className="auth-card">
           <div className="auth-tabs" role="tablist">
             <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "signup"}
               className={mode === "signup" ? "active" : ""}
               onClick={() => setMode("signup")}
             >
               Create account
             </button>
             <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "signin"}
               className={mode === "signin" ? "active" : ""}
               onClick={() => setMode("signin")}
             >

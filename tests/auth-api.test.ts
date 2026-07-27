@@ -33,6 +33,12 @@ const registration = {
 };
 
 describe("authentication API", () => {
+  it("returns an anonymous session without a failed network request", async () => {
+    const response = await request(app).get("/api/auth/me");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ user: null });
+  });
+
   it("registers a personalized user and restores the cookie session", async () => {
     const agent = request.agent(app);
     const registered = await agent

@@ -59,6 +59,15 @@ PathStudio form
     → local storage + rendered learning path
 ```
 
+Performance and discoverability:
+
+- Interaction-only lesson, Path Studio, and celebration UI is lazy-loaded into separate production chunks.
+- Below-the-fold rewards and path sections use `content-visibility` with intrinsic sizing to reduce initial rendering work without introducing layout shift.
+- External display fonts load asynchronously; the critical interface uses the system font stack immediately.
+- Hashed assets receive immutable one-year caching, while HTML remains uncached so deployments update safely.
+- Canonical, robots, sitemap, Open Graph, Twitter, and `WebApplication` JSON-LD metadata are included.
+- The measured local production build scores 99 Performance and 100 for Accessibility, Best Practices, and SEO in Lighthouse mobile simulation (FCP 1.4s, LCP 1.6s, CLS 0.003, TBT 0ms). Lab results vary by hardware and network and should be complemented with production field data.
+
 ### Backend
 
 The backend is a stateless Express and TypeScript API following a layered architecture.

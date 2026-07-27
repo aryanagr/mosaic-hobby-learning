@@ -30,7 +30,7 @@ async function authRequest(path: string, init?: RequestInit) {
 
 export async function getCurrentUser(): Promise<AuthUser | null> {
   try {
-    const body = (await authRequest("/me")) as { user: AuthUser };
+    const body = (await authRequest("/me")) as { user: AuthUser | null };
     return body.user;
   } catch {
     return null;
