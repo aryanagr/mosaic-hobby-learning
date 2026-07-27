@@ -1,4 +1,4 @@
-# Mosaic
+# SkillSprout
 
 **Live frontend demo:** https://aryanagr.github.io/mosaic-hobby-learning/
 
@@ -8,7 +8,7 @@ The GitHub Pages deployment demonstrates the seeded, local-first learning flow. 
 
 The repository also includes `vercel.json` and a catch-all Express function under `api/` for full-stack Vercel deployment. Without `DATABASE_URL`, the serverless API uses the deterministic in-memory planner; configure a hosted PostgreSQL URL to enable normalized catalog and progress endpoints.
 
-Mosaic creates the smallest useful learning path for a real hobby outcome. A learner describes a moment they want to unlock, their current ability, available time, and content they dislike. The system returns six explainable, medium-aware techniques and lets the learner master or remove each one.
+SkillSprout creates the smallest useful learning path for a real hobby outcome. A learner describes a moment they want to unlock, their current ability, available time, and content they dislike. The system returns six explainable, medium-aware techniques and lets the learner master or remove each one.
 
 ## Architecture summary
 
@@ -334,4 +334,4 @@ The combined implementation quality is above the requested 90% for this assignme
 - PostgreSQL: selective B-tree indexes and their write overhead
 - Groq: current free-tier limits and rate-limit headers
 
-The interface direction was informed by [Oboe](https://oboe.fyi/) and [Wondering](https://wondering.app/); the implementation and product flow are original to Mosaic.
+The interface direction was informed by [Oboe](https://oboe.fyi/) and [Wondering](https://wondering.app/); the implementation and product flow are original to SkillSprout.

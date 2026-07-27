@@ -38,7 +38,7 @@ WHERE h.slug='guitar' AND (technique.slug, prerequisite.slug) IN (('pocket-strum
 ON CONFLICT DO NOTHING;
 
 INSERT INTO learning_resources (technique_id, title, description, resource_type, content, duration_minutes, source_name, display_order)
-SELECT t.id, 'Quick guide: ' || t.title, 'A concise explanation followed by one focused practice instruction.', CASE WHEN h.slug='guitar' THEN 'exercise'::resource_type ELSE 'article'::resource_type END, CASE WHEN h.slug='guitar' THEN 'Practise slowly for five clean repetitions. Increase speed only while the motion remains relaxed and controlled.' ELSE 'Study one example, name the tactical or strategic signal, then find the same signal in a position from your own game.' END, LEAST(t.estimated_minutes,15), 'Mosaic original', 1
+SELECT t.id, 'Quick guide: ' || t.title, 'A concise explanation followed by one focused practice instruction.', CASE WHEN h.slug='guitar' THEN 'exercise'::resource_type ELSE 'article'::resource_type END, CASE WHEN h.slug='guitar' THEN 'Practise slowly for five clean repetitions. Increase speed only while the motion remains relaxed and controlled.' ELSE 'Study one example, name the tactical or strategic signal, then find the same signal in a position from your own game.' END, LEAST(t.estimated_minutes,15), 'SkillSprout original', 1
 FROM techniques t JOIN hobbies h ON h.id=t.hobby_id
 WHERE h.slug IN ('chess','guitar')
   AND NOT EXISTS (SELECT 1 FROM learning_resources resource WHERE resource.technique_id=t.id AND resource.display_order=1);

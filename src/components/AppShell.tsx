@@ -5,7 +5,7 @@ export function AppShell({ children }: PropsWithChildren) {
     <div className="app-shell">
       <aside>
         <a className="brand" href="#top">
-          <b>M</b>mosaic
+          <b>S</b>SkillSprout
         </a>
         <nav>
           <a className="active" href="#path">
@@ -31,7 +31,7 @@ export function AppShell({ children }: PropsWithChildren) {
       <main id="top">
         <header>
           <a className="brand" href="#top">
-            <b>M</b>mosaic
+            <b>S</b>SkillSprout
           </a>
           <button>AG</button>
         </header>
