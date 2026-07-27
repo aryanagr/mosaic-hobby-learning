@@ -7,7 +7,14 @@ import { config } from "../config.js";
 if (!config.DATABASE_URL)
   throw new Error("DATABASE_URL is required to run migrations");
 const migrationDirectory = dirname(fileURLToPath(import.meta.url));
-const pool = new Pool({ connectionString: config.DATABASE_URL, max: 1 });
+const pool = new Pool({
+  connectionString: config.DATABASE_URL,
+  max: 1,
+  ssl:
+    config.DATABASE_SSL === "require"
+      ? { rejectUnauthorized: false }
+      : undefined,
+});
 
 async function applyMigration(client: PoolClient, filename: string) {
   const alreadyApplied = await client.query(

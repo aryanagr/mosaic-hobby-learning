@@ -244,14 +244,14 @@ cp .env.example .env
 DATABASE_URL=postgresql://mosaic:mosaic@127.0.0.1:55432/mosaic npm run db:migrate
 ```
 
-Without `DATABASE_URL`, the AI path demo uses its repository-compatible memory adapter. Normalized hobby, learning-path, and progress endpoints are enabled when PostgreSQL is configured.
+Without `DATABASE_URL`, the AI path demo uses its repository-compatible memory adapter. Normalized hobby, learning-path, and progress endpoints are enabled when PostgreSQL is configured. Hosted PostgreSQL providers should use a pooled connection URL with `DATABASE_SSL=require`; local Docker uses `DATABASE_SSL=disable`.
 
 ## Capacity target: 1,000 requests/minute
 
 1,000 requests/minute is approximately 17 requests/second. The application is designed to exceed that for cached plan reads:
 
 - Stateless HTTP processes can scale horizontally.
-- PostgreSQL uses a bounded connection pool (`DATABASE_POOL_MAX=10` by default).
+- PostgreSQL repositories share one bounded connection pool (`DATABASE_POOL_MAX=5` by default), avoiding duplicate pools in each serverless instance.
 - Per-instance cache holds at most 1,000 plans with a configurable TTL.
 - Concurrent identical requests are coalesced before AI or database work.
 - Per-client plan creation is limited to 120/minute.

@@ -13,6 +13,10 @@ import type { LearningPathService } from "./services/learning-path-service.js";
 export function createApp(
   planService: PlanService,
   learningPathService?: LearningPathService,
+  checkDatabase?: () => Promise<{
+    configured: boolean;
+    reachable: boolean;
+  }>,
 ) {
   const app = express();
   app.disable("x-powered-by");
@@ -31,9 +35,20 @@ export function createApp(
       legacyHeaders: false,
     }),
   );
-  app.get("/api/health", (_request, response) =>
-    response.json({ status: "ok" }),
-  );
+  app.get("/api/health", async (_request, response) => {
+    try {
+      const database = (await checkDatabase?.()) ?? {
+        configured: false,
+        reachable: false,
+      };
+      response.json({ status: "ok", database });
+    } catch {
+      response.status(503).json({
+        status: "degraded",
+        database: { configured: true, reachable: false },
+      });
+    }
+  });
   app.use("/api/plans", createPlansRouter(planService));
   if (learningPathService)
     app.use("/api", createLearningDomainRouter(learningPathService));

@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import type { Pool } from "pg";
 import type { LearningPlan } from "../../shared/learning-plan.js";
 import type { PlanRepository } from "./plan-repository.js";
 
@@ -9,14 +9,8 @@ interface PlanRow {
 export class PostgresPlanRepository implements PlanRepository {
   private readonly pool: Pool;
 
-  constructor(connectionString: string, maxConnections: number) {
-    this.pool = new Pool({
-      connectionString,
-      max: maxConnections,
-      idleTimeoutMillis: 30_000,
-      connectionTimeoutMillis: 2_000,
-      maxUses: 7_500,
-    });
+  constructor(pool: Pool) {
+    this.pool = pool;
   }
 
   async findByGoalHash(goalHash: string) {
@@ -38,6 +32,6 @@ export class PostgresPlanRepository implements PlanRepository {
   }
 
   async close() {
-    await this.pool.end();
+    return Promise.resolve();
   }
 }

@@ -29,3 +29,15 @@ describe("POST /api/plans", () => {
     expect(response.body.error.code).toBe("INVALID_REQUEST");
   });
 });
+
+describe("GET /api/health", () => {
+  it("reports when the database fallback is active", async () => {
+    const response = await request(app).get("/api/health");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      status: "ok",
+      database: { configured: false, reachable: false },
+    });
+  });
+});

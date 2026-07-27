@@ -1,4 +1,4 @@
-import { Pool, type PoolClient } from "pg";
+import type { Pool, PoolClient } from "pg";
 import type {
   GenerateLearningPathInput,
   UpdateTechniqueProgressInput,
@@ -27,14 +27,8 @@ interface CandidateRow {
 
 export class PostgresLearningDomainRepository implements LearningDomainRepository {
   private readonly pool: Pool;
-  constructor(connectionString: string, maxConnections: number) {
-    this.pool = new Pool({
-      connectionString,
-      max: maxConnections,
-      idleTimeoutMillis: 30_000,
-      connectionTimeoutMillis: 2_000,
-      maxUses: 7_500,
-    });
+  constructor(pool: Pool) {
+    this.pool = pool;
   }
 
   async listHobbies() {
@@ -281,6 +275,6 @@ export class PostgresLearningDomainRepository implements LearningDomainRepositor
     );
   }
   async close() {
-    await this.pool.end();
+    return Promise.resolve();
   }
 }
