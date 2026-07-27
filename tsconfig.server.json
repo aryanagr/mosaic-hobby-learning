@@ -10,5 +10,10 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["server/**/*.ts", "shared/**/*.ts", "tests/**/*.ts"]
+  "include": [
+    "server/**/*.ts",
+    "api/**/*.ts",
+    "shared/**/*.ts",
+    "tests/**/*.ts"
+  ]
 }
