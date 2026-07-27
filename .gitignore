@@ -13,6 +13,8 @@ dist-ssr
 *.local
 *.tsbuildinfo
 .vercel
+playwright-report
+test-results
 
 # Editor directories and files
 .vscode/*

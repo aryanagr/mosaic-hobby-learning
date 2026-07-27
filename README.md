@@ -301,6 +301,13 @@ npm run lint
 npm run build
 ```
 
+End-to-end tests launch both the frontend and API locally, then exercise the learning flow in Chromium at desktop, tablet, and mobile viewport sizes:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
 ## Tests
 
 - API success and validation contract
@@ -311,13 +318,14 @@ npm run build
 - Weighted technique ranking and level filtering
 - Prerequisite ordering and cycle rejection
 - Redux plan replacement, restoration, and immutable status updates
+- Responsive shell, lesson completion, and full-stack plan generation in desktop, tablet, and mobile browsers
 - Transactional, repeatable migrations validated against PostgreSQL 17
 
 ## Engineering review scorecard
 
 | Area                  | Current | Evidence / remaining work                                                             |
 | --------------------- | ------: | ------------------------------------------------------------------------------------- |
-| Correctness           |     93% | Strict types, twelve tests, validated inputs/outputs; browser E2E remains             |
+| Correctness           |     94% | Strict types, fourteen unit/API tests and nine cross-viewport browser tests           |
 | Architecture          |     92% | Feature frontend, layered backend, dependency inversion, repository/provider adapters |
 | Code quality          |     94% | Prettier, Oxlint, small modules, descriptive contracts, no unchecked `any`            |
 | Algorithms            |     91% | SHA-256 idempotency, bounded cache, promise coalescing, modality rules                |
