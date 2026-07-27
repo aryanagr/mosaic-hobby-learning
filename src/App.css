@@ -12,7 +12,7 @@
 .app-shell > aside {
   position: fixed;
   inset: 0 auto 0 0;
-  width: 238px;
+  width: 248px;
   padding: 30px 22px 22px;
   background: #23231f;
   color: white;
@@ -113,7 +113,8 @@ aside nav .active {
   color: #8c8b85;
 }
 main {
-  margin-left: 238px;
+  margin-left: 248px;
+  min-width: 0;
 }
 main > header,
 .bottom {
@@ -124,7 +125,7 @@ main > header,
   background: #ece8dd;
   position: relative;
   overflow: hidden;
-  padding: 69px clamp(42px, 7vw, 110px) 55px;
+  padding: 69px clamp(42px, 6vw, 96px) 55px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -141,7 +142,8 @@ main > header,
   background: #e6dfd0;
 }
 .hero > div:first-child {
-  max-width: 600px;
+  max-width: 680px;
+  min-width: 0;
   z-index: 1;
 }
 .kicker {
@@ -182,13 +184,17 @@ main > header,
   font-weight: 700;
   font-size: 12px;
 }
+.actions button {
+  white-space: nowrap;
+}
 .primary {
   background: #272622 !important;
   color: white;
   padding: 0 18px;
 }
-.actions button:last-child {
-  width: 44px;
+.actions .lab-button {
+  width: auto;
+  padding: 0 18px;
   background: #ded9cd;
 }
 .orbit {
@@ -244,7 +250,7 @@ main > header,
   border-bottom: 1px solid var(--line);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 21px clamp(42px, 7vw, 110px);
+  padding: 21px clamp(42px, 6vw, 96px);
   gap: 30px;
 }
 .stats > div {
@@ -282,8 +288,8 @@ main > header,
   margin-top: 3px;
 }
 .path {
-  padding: 57px clamp(32px, 7vw, 110px) 100px;
-  max-width: 1120px;
+  padding: 57px clamp(42px, 6vw, 96px) 100px;
+  max-width: 1240px;
 }
 .path-head {
   display: flex;
@@ -311,6 +317,10 @@ main > header,
 article {
   display: grid;
   grid-template-columns: 45px 1fr;
+  cursor: pointer;
+}
+.card button,
+.path-head button {
   cursor: pointer;
 }
 .step {
@@ -554,12 +564,12 @@ article.active .card {
     display: none;
   }
   .stats {
-    padding: 17px 20px;
-    gap: 10px;
-    overflow: auto;
+    padding: 18px 20px;
+    gap: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .stats > div {
-    min-width: 125px;
+    min-width: 0;
   }
   .stats > div > span {
     display: none;
@@ -569,6 +579,10 @@ article.active .card {
   }
   .path-head h2 {
     font-size: 27px;
+  }
+  .path-head {
+    align-items: flex-start;
+    gap: 18px;
   }
   article {
     grid-template-columns: 36px 1fr;
@@ -615,6 +629,63 @@ article.active .card {
     bottom: 78px;
     width: calc(100% - 32px);
     text-align: center;
+  }
+}
+@media (min-width: 761px) and (max-width: 1050px) {
+  .app-shell > aside {
+    width: 210px;
+    padding-inline: 18px;
+  }
+  main {
+    margin-left: 210px;
+  }
+  .hero {
+    gap: 32px;
+    padding-inline: 48px;
+  }
+  .hero h1 {
+    font-size: clamp(42px, 5.5vw, 56px);
+  }
+  .orbit {
+    width: 150px;
+    height: 150px;
+    flex-basis: 150px;
+  }
+  .stats,
+  .path {
+    padding-inline: 48px;
+  }
+}
+@media (max-width: 520px) {
+  .hero {
+    padding: 42px 20px 34px;
+  }
+  .hero h1 {
+    font-size: clamp(38px, 12vw, 48px);
+    letter-spacing: -2px;
+  }
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .actions button {
+    width: 100%;
+  }
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .stats > div > span {
+    display: grid;
+  }
+  .path-head {
+    display: grid;
+  }
+  .card-top {
+    gap: 12px;
+  }
+  .card > p {
+    line-height: 1.5;
   }
 }
 @media (prefers-reduced-motion: reduce) {
