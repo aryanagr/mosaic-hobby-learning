@@ -4,6 +4,7 @@ import type {
   LearningPlan,
 } from "../../../shared/learning-plan";
 import { createLearningPlan } from "../../services/plans-api";
+import { Loader } from "../../components/Loader";
 
 const initialGoal: CreatePlanRequest = {
   hobby: "Guitar",
@@ -122,10 +123,13 @@ export function PathStudio({ onClose, onCreated, onError }: PathStudioProps) {
           <button
             className="primary generate"
             disabled={status === "submitting"}
+            aria-busy={status === "submitting"}
           >
-            {status === "submitting"
-              ? "Distilling your path…"
-              : "Distill my path　✦"}
+            {status === "submitting" ? (
+              <Loader size="small" label="Distilling your path…" />
+            ) : (
+              "Distill my path　✦"
+            )}
           </button>
         </form>
         <small className="ai-note">

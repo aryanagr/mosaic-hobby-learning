@@ -6,6 +6,43 @@
   --lime: #d9f06b;
   --purple: #7654cc;
 }
+.loader-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  line-height: 1;
+}
+.loader-spinner {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: loader-spin 700ms linear infinite;
+}
+.loader-wrap.small .loader-spinner {
+  width: 15px;
+  height: 15px;
+}
+.loader-wrap.large {
+  flex-direction: column;
+  gap: 16px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.loader-wrap.large .loader-spinner {
+  width: 42px;
+  height: 42px;
+  border-width: 3px;
+  color: var(--purple);
+}
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .app-shell {
   min-height: 100vh;
 }
@@ -859,6 +896,20 @@ article.active .card {
   background: #23231f;
   color: var(--lime);
   font-weight: 700;
+}
+.auth-loading:before {
+  content: "S";
+  position: absolute;
+  top: calc(50% - 83px);
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px 4px;
+  background: var(--lime);
+  color: var(--ink);
+  font: 22px "Instrument Serif";
+  transform: rotate(-3deg);
 }
 .auth-page {
   margin: 0;

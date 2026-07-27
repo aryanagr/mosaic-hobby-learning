@@ -5,11 +5,12 @@ import {
   type AuthUser,
   type OnboardingProfile,
 } from "./auth-api";
+import { Loader } from "../../components/Loader";
 
 export function AuthScreen({
   onAuthenticated,
 }: {
-  onAuthenticated(user: AuthUser, isNew: boolean): void;
+  onAuthenticated(user: AuthUser, isNew: boolean): void | Promise<void>;
 }) {
   const [mode, setMode] = useState<"signup" | "signin">("signup");
   const [busy, setBusy] = useState(false);
@@ -40,7 +41,7 @@ export function AuthScreen({
               String(data.get("email")),
               String(data.get("password")),
             );
-      onAuthenticated(user, mode === "signup");
+      await onAuthenticated(user, mode === "signup");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Please try again.");
     } finally {
@@ -199,12 +200,23 @@ export function AuthScreen({
                 {error}
               </p>
             )}
-            <button className="primary auth-submit" disabled={busy}>
-              {busy
-                ? "Preparing…"
-                : mode === "signup"
-                  ? "Create my path ✦"
-                  : "Sign in →"}
+            <button
+              className="primary auth-submit"
+              disabled={busy}
+              aria-busy={busy}
+            >
+              {busy ? (
+                <Loader
+                  size="small"
+                  label={
+                    mode === "signup" ? "Building your path…" : "Signing in…"
+                  }
+                />
+              ) : mode === "signup" ? (
+                "Create my path ✦"
+              ) : (
+                "Sign in →"
+              )}
             </button>
           </form>
         </div>

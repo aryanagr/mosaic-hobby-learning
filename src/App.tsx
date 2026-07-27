@@ -29,6 +29,7 @@ import {
   type AuthUser,
 } from "./features/auth/auth-api";
 import { createLearningPlan } from "./services/plans-api";
+import { Loader } from "./components/Loader";
 import { AchievementShelf } from "./features/gamification/AchievementShelf";
 import { Celebration } from "./features/gamification/Celebration";
 import {
@@ -106,7 +107,11 @@ export default function App() {
   };
 
   if (!authReady)
-    return <div className="auth-loading">Growing your workspace…</div>;
+    return (
+      <div className="auth-loading">
+        <Loader size="large" label="Growing your workspace…" />
+      </div>
+    );
   if (!user) return <AuthScreen onAuthenticated={authenticated} />;
 
   return (

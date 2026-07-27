@@ -67,6 +67,10 @@ test("opens a lesson and records mastery", async ({ page }) => {
 });
 
 test("generates a new path through the local API", async ({ page }) => {
+  await page.route("**/api/plans", async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await route.continue();
+  });
   await page.getByRole("button", { name: /Reimagine path/ }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
@@ -74,9 +78,15 @@ test("generates a new path through the local API", async ({ page }) => {
   await dialog
     .getByLabel("The real-life moment I want")
     .fill("Paint a small landscape for my desk");
-  await dialog.getByRole("button", { name: /Distill my path/ }).click();
+  const generateButton = dialog.locator("button.generate");
+  await generateButton.click();
+  await expect(generateButton).toBeDisabled();
+  await expect(generateButton).toHaveAttribute("aria-busy", "true");
+  await expect(dialog.getByRole("status")).toContainText(
+    "Distilling your path",
+  );
 
-  await expect(page.getByRole("status")).toContainText("path is ready");
+  await expect(page.locator(".toast")).toContainText("path is ready");
   await expect(dialog).toBeHidden();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     /watercolor|landscape/i,
