@@ -4,6 +4,8 @@
 
 **Live full-stack Vercel deployment:** https://mosaic-hobby-learning.vercel.app/
 
+**29-second product walkthrough:** https://mosaic-hobby-learning.vercel.app/demo/SkillSprout-Assignment-Demo.mp4
+
 The GitHub Pages deployment demonstrates the seeded, local-first learning flow. Run the Express API locally or deploy it separately to enable server-backed plan generation and PostgreSQL features.
 
 The repository also includes `vercel.json` and a catch-all Express function under `api/` for full-stack Vercel deployment. Without `DATABASE_URL`, the serverless API uses the deterministic in-memory planner; configure a hosted PostgreSQL URL to enable normalized catalog and progress endpoints.
