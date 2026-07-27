@@ -1,6 +1,17 @@
 import type { PropsWithChildren } from "react";
 
-export function AppShell({ children }: PropsWithChildren) {
+interface AppShellProps extends PropsWithChildren {
+  userName: string;
+  onLogout(): void;
+}
+
+export function AppShell({ children, userName, onLogout }: AppShellProps) {
+  const initials = userName
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
   return (
     <div className="app-shell">
       <aside>
@@ -19,13 +30,13 @@ export function AppShell({ children }: PropsWithChildren) {
           <strong>Keep it small</strong>
           <p>20 focused minutes beats two hours of browsing.</p>
         </div>
-        <button className="profile">
-          <span>AG</span>
+        <button className="profile" onClick={onLogout} title="Sign out">
+          <span>{initials}</span>
           <span>
-            <strong>Aryan</strong>
+            <strong>{userName}</strong>
             <small>Curious beginner</small>
           </span>
-          <b>•••</b>
+          <b>↗</b>
         </button>
       </aside>
       <main id="top">
@@ -33,7 +44,9 @@ export function AppShell({ children }: PropsWithChildren) {
           <a className="brand" href="#top">
             <b>S</b>SkillSprout
           </a>
-          <button>AG</button>
+          <button onClick={onLogout} aria-label="Sign out">
+            {initials}
+          </button>
         </header>
         {children}
       </main>

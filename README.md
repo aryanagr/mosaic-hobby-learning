@@ -215,6 +215,8 @@ shared/                     API-safe domain contracts
 
 The frontend stores one `LearningPlan` aggregate rather than disconnected title, technique, and progress state. Redux owns durable cross-feature domain state; temporary modal, form, and toast state stays local to the component that uses it. Progress is derived by a pure function and covered for skipped/all-skipped edge cases.
 
+Authentication starts with a responsive sign-up/sign-in experience. Registration captures the learner's hobby, experience, real-world goal, weekly availability, and preferred format, then generates the first path from those answers. Sessions use a signed, HTTP-only, same-site cookie; passwords are hashed with bcrypt and never returned to the client.
+
 ### Backend boundaries
 
 ```text
@@ -311,6 +313,7 @@ npm run test:e2e
 ## Tests
 
 - API success and validation contract
+- Registration, password login, signed session restoration, and personalized onboarding
 - Primary-provider failure and fallback
 - Concurrent-request coalescing
 - Hobby-modality selection

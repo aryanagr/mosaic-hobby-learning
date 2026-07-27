@@ -13,6 +13,10 @@ const environmentSchema = z.object({
   GROQ_API_KEY: z.string().min(1).optional(),
   GROQ_MODEL: z.string().default("llama-3.1-8b-instant"),
   PLAN_CACHE_TTL_MS: z.coerce.number().int().positive().default(300_000),
+  AUTH_SECRET: z
+    .string()
+    .min(32)
+    .default("local-development-secret-change-me-123456"),
 });
 
 export type AppConfig = z.infer<typeof environmentSchema>;

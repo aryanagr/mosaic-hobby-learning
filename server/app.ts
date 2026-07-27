@@ -9,6 +9,8 @@ import { errorHandler, notFoundHandler } from "./middleware/error-handler.js";
 import { createPlansRouter } from "./routes/plans.routes.js";
 import { createLearningDomainRouter } from "./routes/learning-domain.routes.js";
 import type { LearningPathService } from "./services/learning-path-service.js";
+import type { AuthService } from "./services/auth-service.js";
+import { createAuthRouter } from "./routes/auth.routes.js";
 
 export function createApp(
   planService: PlanService,
@@ -17,6 +19,7 @@ export function createApp(
     configured: boolean;
     reachable: boolean;
   }>,
+  authService?: AuthService,
 ) {
   const app = express();
   app.disable("x-powered-by");
@@ -49,6 +52,7 @@ export function createApp(
       });
     }
   });
+  if (authService) app.use("/api/auth", createAuthRouter(authService));
   app.use("/api/plans", createPlansRouter(planService));
   if (learningPathService)
     app.use("/api", createLearningDomainRouter(learningPathService));

@@ -8,9 +8,16 @@ import { PostgresLearningDomainRepository } from "./repositories/postgres-learni
 import { PostgresPlanRepository } from "./repositories/postgres-plan-repository.js";
 import { LearningPathService } from "./services/learning-path-service.js";
 import { PlanService } from "./services/plan-service.js";
+import { AuthService } from "./services/auth-service.js";
+import { MemoryAuthRepository } from "./repositories/memory-auth-repository.js";
+import { PostgresAuthRepository } from "./repositories/postgres-auth-repository.js";
 
 export function bootstrap() {
   const databasePool = createDatabasePool(config);
+  const authRepository = databasePool
+    ? new PostgresAuthRepository(databasePool)
+    : new MemoryAuthRepository();
+  const authService = new AuthService(authRepository, config.AUTH_SECRET);
   const fallbackGenerator = new FallbackPlanGenerator();
   const primaryGenerator = config.GROQ_API_KEY
     ? new GroqPlanGenerator(config.GROQ_API_KEY, config.GROQ_MODEL)
@@ -31,16 +38,22 @@ export function bootstrap() {
     ? new LearningPathService(learningDomainRepository)
     : undefined;
   return {
-    app: createApp(planService, learningPathService, async () => {
-      if (!databasePool) return { configured: false, reachable: false };
-      await databasePool.query("SELECT 1");
-      return { configured: true, reachable: true };
-    }),
+    app: createApp(
+      planService,
+      learningPathService,
+      async () => {
+        if (!databasePool) return { configured: false, reachable: false };
+        await databasePool.query("SELECT 1");
+        return { configured: true, reachable: true };
+      },
+      authService,
+    ),
     close: async () => {
       await Promise.all([
         planRepository.close(),
         learningDomainRepository?.close(),
         databasePool?.end(),
+        authRepository.close(),
       ]);
     },
   };

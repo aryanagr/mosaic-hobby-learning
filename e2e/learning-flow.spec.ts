@@ -4,6 +4,13 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await page.getByLabel("Your name").fill("E2E Learner");
+  await page
+    .getByLabel("Email")
+    .fill(`learner-${crypto.randomUUID()}@example.com`);
+  await page.getByLabel("Password").fill("strong-password");
+  await page.getByRole("button", { name: /Create my path/ }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
 test("renders a responsive SkillSprout shell without horizontal overflow", async ({
