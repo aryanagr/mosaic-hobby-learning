@@ -12,6 +12,10 @@ The repository also includes `vercel.json` and a catch-all Express function unde
 
 SkillSprout creates the smallest useful learning path for a real hobby outcome. A learner describes a moment they want to unlock, their current ability, available time, and content they dislike. The system returns six explainable, medium-aware techniques and lets the learner master or remove each one.
 
+## Mobile app
+
+The repository now includes a native Expo and React Native client in [`mobile/`](mobile/README.md). It shares the production Express API and provides personalized onboarding, Redux/AsyncStorage persistence, lessons, progress, XP, milestone haptics, animated celebrations, and responsive phone/tablet layouts. Android APK and Play Store build profiles are defined in `mobile/eas.json`.
+
 ## Architecture summary
 
 ### Frontend

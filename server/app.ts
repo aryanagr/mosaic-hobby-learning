@@ -26,7 +26,12 @@ export function createApp(
   app.set("trust proxy", 1);
   app.use(helmet());
   app.use(compression());
-  app.use(cors({ origin: /^http:\/\/(localhost|127\.0\.0\.1):\d+$/ }));
+  app.use(
+    cors({
+      origin: /^http:\/\/(localhost|127\.0\.0\.1):\d+$/,
+      credentials: true,
+    }),
+  );
   app.use(express.json({ limit: "20kb" }));
   app.use(pinoHttp({ autoLogging: process.env.NODE_ENV !== "test" }));
   app.use(

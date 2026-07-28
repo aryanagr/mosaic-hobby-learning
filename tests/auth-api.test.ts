@@ -39,6 +39,17 @@ describe("authentication API", () => {
     expect(response.body).toEqual({ user: null });
   });
 
+  it("allows credentialed local development clients", async () => {
+    const response = await request(app)
+      .options("/api/auth/me")
+      .set("Origin", "http://127.0.0.1:8082")
+      .set("Access-Control-Request-Method", "GET");
+    expect(response.headers["access-control-allow-origin"]).toBe(
+      "http://127.0.0.1:8082",
+    );
+    expect(response.headers["access-control-allow-credentials"]).toBe("true");
+  });
+
   it("registers a personalized user and restores the cookie session", async () => {
     const agent = request.agent(app);
     const registered = await agent

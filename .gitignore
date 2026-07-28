@@ -15,6 +15,9 @@ dist-ssr
 .vercel
 playwright-report
 test-results
+.expo
+mobile/android
+mobile/artifacts
 
 # Editor directories and files
 .vscode/*
