@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import type { User } from "./domain/models";
 import { AuthScreen } from "./screens/AuthScreen";
 import { DashboardScreen } from "./screens/DashboardScreen";
@@ -39,8 +40,14 @@ function SkillSproutApp() {
 export default function App() {
   return (
     <Provider store={store}>
-      <StatusBar style="light" />
-      <SkillSproutApp />
+      <SafeAreaProvider>
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor="#23231f"
+          translucent={false}
+        />
+        <SkillSproutApp />
+      </SafeAreaProvider>
     </Provider>
   );
 }

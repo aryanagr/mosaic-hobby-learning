@@ -11,9 +11,17 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { replacePlan, updateStatus } from "../store/store";
-import { calculateProgress, type Milestone } from "../domain/gamification";
+import {
+  calculateProgress,
+  milestones,
+  type Milestone,
+} from "../domain/gamification";
 import type { Technique, User } from "../domain/models";
 import { generatePlan, logout } from "../services/api";
 import { colors, shadow } from "../theme";
@@ -32,9 +40,13 @@ export function DashboardScreen({
     [plan.techniques],
   );
   const [selected, setSelected] = useState<Technique | null>(null);
-  const [celebration, setCelebration] = useState<Milestone | null>(null);
+  const [completion, setCompletion] = useState<{
+    techniqueTitle: string;
+    milestone: Milestone | null;
+  } | null>(null);
   const [regenerating, setRegenerating] = useState(false);
   const { width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const tablet = width >= 700;
 
   const master = async () => {
@@ -45,12 +57,16 @@ export function DashboardScreen({
     );
     const after = calculateProgress(afterTechniques);
     const earned = after.unlocked.find((item) => !before.includes(item.id));
+    const techniqueTitle = selected.title;
     dispatch(updateStatus({ id: selected.id, status: "done" }));
     setSelected(null);
     void Haptics.notificationAsync(
       Haptics.NotificationFeedbackType.Success,
     ).catch(() => undefined);
-    if (earned) setTimeout(() => setCelebration(earned), 280);
+    setTimeout(
+      () => setCompletion({ techniqueTitle, milestone: earned ?? null }),
+      280,
+    );
   };
 
   const reimagine = async () => {
@@ -63,8 +79,9 @@ export function DashboardScreen({
   };
 
   return (
-    <View style={styles.page}>
+    <SafeAreaView style={styles.page} edges={["top"]}>
       <ScrollView
+        style={styles.scroll}
         contentContainerStyle={[styles.content, tablet && styles.tabletContent]}
         showsVerticalScrollIndicator={false}
       >
@@ -164,25 +181,27 @@ export function DashboardScreen({
             </Text>
           </View>
           <View style={styles.badges}>
-            {progress.unlocked.length ? (
-              progress.unlocked.map((item) => (
-                <View key={item.id} style={styles.badge}>
-                  <Text style={styles.badgeIcon}>{item.icon}</Text>
-                  <Text style={styles.badgeTitle}>{item.title}</Text>
-                  <Text style={styles.earned}>EARNED</Text>
-                </View>
-              ))
-            ) : (
-              <View style={styles.emptyBadge}>
-                <Text style={styles.emptyIcon}>◇</Text>
-                <View>
-                  <Text style={styles.badgeTitle}>Your first sprout</Text>
-                  <Text style={styles.badgeDetail}>
-                    Master one technique to unlock it.
+            {milestones.map((item) => {
+              const earned = progress.unlocked.some(
+                (unlocked) => unlocked.id === item.id,
+              );
+              return (
+                <View
+                  key={item.id}
+                  style={[styles.badge, earned && styles.badgeEarned]}
+                >
+                  <Text style={styles.badgeIcon}>
+                    {earned ? item.icon : "◇"}
+                  </Text>
+                  <Text style={styles.badgeTitle} numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                  <Text style={[styles.earned, !earned && styles.locked]}>
+                    {earned ? "EARNED" : "LOCKED"}
                   </Text>
                 </View>
-              </View>
-            )}
+              );
+            })}
           </View>
         </View>
 
@@ -202,13 +221,19 @@ export function DashboardScreen({
                 key={item.id}
                 item={item}
                 index={index}
+                isLast={index === progress.total - 1}
                 onPress={() => setSelected(item)}
               />
             ))}
         </View>
       </ScrollView>
 
-      <View style={styles.bottomNav}>
+      <View
+        style={[
+          styles.bottomNav,
+          { height: 64 + insets.bottom, paddingBottom: insets.bottom },
+        ]}
+      >
         <Nav icon="⌂" label="My path" active />
         <Nav icon="◇" label="Discover" />
         <Nav icon="↗" label="Progress" />
@@ -223,21 +248,23 @@ export function DashboardScreen({
           setSelected(null);
         }}
       />
-      <CelebrationModal
-        milestone={celebration}
-        onClose={() => setCelebration(null)}
+      <CompletionModal
+        completion={completion}
+        onClose={() => setCompletion(null)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
 function TechniqueCard({
   item,
   index,
+  isLast,
   onPress,
 }: {
   item: Technique;
   index: number;
+  isLast: boolean;
   onPress(): void;
 }) {
   return (
@@ -246,10 +273,18 @@ function TechniqueCard({
       onPress={onPress}
       accessibilityRole="button"
     >
-      <View style={[styles.step, item.status === "done" && styles.stepDone]}>
-        <Text style={styles.stepText}>
-          {item.status === "done" ? "✓" : index + 1}
-        </Text>
+      <View style={styles.stepRail}>
+        <View style={[styles.step, item.status === "done" && styles.stepDone]}>
+          <Text
+            style={[
+              styles.stepText,
+              item.status === "done" && styles.stepTextDone,
+            ]}
+          >
+            {item.status === "done" ? "✓" : index + 1}
+          </Text>
+        </View>
+        {!isLast && <View style={styles.connector} />}
       </View>
       <View style={styles.techniqueCard}>
         <View style={styles.cardTop}>
@@ -345,43 +380,58 @@ function LessonModal({
   );
 }
 
-function CelebrationModal({
-  milestone,
+function CompletionModal({
+  completion,
   onClose,
 }: {
-  milestone: Milestone | null;
+  completion: { techniqueTitle: string; milestone: Milestone | null } | null;
   onClose(): void;
 }) {
   const scale = useRef(new Animated.Value(0.75)).current;
+  const burst = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    if (milestone) {
+    if (completion) {
       scale.setValue(0.75);
-      Animated.spring(scale, {
-        toValue: 1,
-        useNativeDriver: true,
-        friction: 6,
-      }).start();
+      burst.setValue(0);
+      Animated.parallel([
+        Animated.spring(scale, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 6,
+        }),
+        Animated.timing(burst, {
+          toValue: 1,
+          duration: 950,
+          useNativeDriver: true,
+        }),
+      ]).start();
     }
-  }, [milestone, scale]);
+  }, [burst, completion, scale]);
   return (
     <Modal
-      visible={!!milestone}
+      visible={!!completion}
       animationType="fade"
       transparent
       onRequestClose={onClose}
     >
       <View style={styles.celebrationBackdrop}>
-        <Text style={styles.confetti}>✦　◆　✦　◆　✦</Text>
+        <ConfettiBurst progress={burst} />
         <Animated.View
           style={[styles.celebrationCard, { transform: [{ scale }] }]}
         >
           <View style={styles.bigBadge}>
-            <Text style={styles.bigBadgeIcon}>{milestone?.icon}</Text>
+            <Text style={styles.bigBadgeIcon}>
+              {completion?.milestone?.icon ?? "✓"}
+            </Text>
           </View>
-          <Text style={styles.kickerDark}>MILESTONE UNLOCKED</Text>
-          <Text style={styles.celebrationTitle}>{milestone?.title}</Text>
+          <Text style={styles.kickerDark}>
+            {completion?.milestone ? "MILESTONE UNLOCKED" : "STEP MASTERED"}
+          </Text>
+          <Text style={styles.celebrationTitle} numberOfLines={2}>
+            {completion?.milestone?.title ?? completion?.techniqueTitle}
+          </Text>
           <Text style={styles.celebrationText}>
-            Keep growing—your next skill is waiting.
+            Nice work. Your progress is saved and the next step is ready.
           </Text>
           <Text style={styles.bonus}>+120 XP</Text>
           <Pressable style={styles.masterButton} onPress={onClose}>
@@ -390,6 +440,60 @@ function CelebrationModal({
         </Animated.View>
       </View>
     </Modal>
+  );
+}
+
+function ConfettiBurst({ progress }: { progress: Animated.Value }) {
+  const pieces = ["◆", "✦", "●", "■", "✦", "◆", "●", "■", "✦", "◆", "●", "■"];
+  return (
+    <View pointerEvents="none" style={styles.confettiLayer}>
+      {pieces.map((piece, index) => {
+        const direction = index % 2 === 0 ? 1 : -1;
+        const distance = 45 + (index % 4) * 20;
+        return (
+          <Animated.Text
+            key={`${piece}-${index}`}
+            style={[
+              styles.confettiPiece,
+              {
+                color:
+                  index % 3 === 0
+                    ? colors.purple
+                    : index % 3 === 1
+                      ? colors.lime
+                      : "#ee967b",
+                transform: [
+                  {
+                    translateX: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, direction * distance],
+                    }),
+                  },
+                  {
+                    translateY: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 150 + (index % 3) * 35],
+                    }),
+                  },
+                  {
+                    rotate: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ["0deg", `${direction * 320}deg`],
+                    }),
+                  },
+                ],
+                opacity: progress.interpolate({
+                  inputRange: [0, 0.75, 1],
+                  outputRange: [1, 1, 0],
+                }),
+              },
+            ]}
+          >
+            {piece}
+          </Animated.Text>
+        );
+      })}
+    </View>
   );
 }
 
@@ -445,12 +549,13 @@ function mediumIcon(medium: Technique["medium"]) {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: colors.paper },
+  page: { flex: 1, backgroundColor: colors.dark },
+  scroll: { backgroundColor: colors.paper },
   content: { paddingBottom: 110 },
   tabletContent: { alignSelf: "center", width: "100%", maxWidth: 900 },
   topbar: {
-    minHeight: 104,
-    paddingTop: 48,
+    minHeight: 64,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -566,12 +671,12 @@ const styles = StyleSheet.create({
   },
   statValue: { color: colors.ink, fontSize: 12, fontWeight: "800" },
   statDetail: { color: colors.muted, fontSize: 9, marginTop: 3 },
-  growth: { padding: 20, backgroundColor: colors.canvas, gap: 12 },
+  growth: { padding: 16, backgroundColor: colors.canvas, gap: 10 },
   tabletGrowth: { flexDirection: "row" },
   levelCard: {
     flex: 1,
-    minHeight: 180,
-    padding: 21,
+    minHeight: 146,
+    padding: 17,
     borderRadius: 19,
     backgroundColor: colors.dark,
   },
@@ -583,12 +688,12 @@ const styles = StyleSheet.create({
   },
   levelTitle: {
     color: colors.white,
-    fontSize: 28,
-    lineHeight: 31,
+    fontSize: 24,
+    lineHeight: 27,
     fontWeight: "500",
     marginTop: 8,
   },
-  xp: { color: colors.lime, fontSize: 12, fontWeight: "800", marginTop: 18 },
+  xp: { color: colors.lime, fontSize: 11, fontWeight: "800", marginTop: 12 },
   xpTrack: {
     height: 7,
     borderRadius: 4,
@@ -598,17 +703,18 @@ const styles = StyleSheet.create({
   },
   xpFill: { height: "100%", backgroundColor: colors.lime },
   levelFoot: { color: "#aaa79e", fontSize: 8, marginTop: 7 },
-  badges: { flex: 1, flexDirection: "row", gap: 9 },
+  badges: { flex: 1, flexDirection: "row", gap: 7 },
   badge: {
     flex: 1,
-    minHeight: 145,
-    borderRadius: 17,
+    minHeight: 112,
+    borderRadius: 15,
     borderWidth: 1,
-    borderColor: "#cfe25d",
+    borderColor: colors.line,
     backgroundColor: colors.paper,
-    padding: 15,
+    padding: 12,
   },
-  badgeIcon: { fontSize: 27 },
+  badgeEarned: { borderColor: "#b8d42d", backgroundColor: "#fcfff1" },
+  badgeIcon: { fontSize: 23 },
   badgeTitle: {
     color: colors.ink,
     fontSize: 11,
@@ -623,6 +729,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     marginTop: "auto",
   },
+  locked: { color: colors.muted },
   emptyBadge: {
     flex: 1,
     minHeight: 100,
@@ -636,7 +743,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   emptyIcon: { fontSize: 28, color: colors.muted },
-  pathHeader: { paddingHorizontal: 20, paddingTop: 36, paddingBottom: 20 },
+  pathHeader: { paddingHorizontal: 20, paddingTop: 30, paddingBottom: 18 },
   kickerDark: {
     color: colors.muted,
     fontSize: 9,
@@ -645,14 +752,15 @@ const styles = StyleSheet.create({
   },
   pathTitle: {
     color: colors.ink,
-    fontSize: 31,
-    lineHeight: 34,
+    fontSize: 28,
+    lineHeight: 31,
     letterSpacing: -1,
     fontWeight: "600",
     marginTop: 9,
   },
-  pathList: { paddingHorizontal: 20, gap: 12 },
+  pathList: { paddingHorizontal: 20 },
   techniqueRow: { flexDirection: "row", gap: 10 },
+  stepRail: { width: 32, alignItems: "center" },
   step: {
     width: 32,
     height: 32,
@@ -660,18 +768,26 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lime,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 17,
+    marginTop: 15,
   },
   stepDone: { backgroundColor: colors.dark },
   stepText: { color: colors.ink, fontSize: 11, fontWeight: "800" },
+  stepTextDone: { color: colors.white, fontSize: 14 },
+  connector: {
+    width: 1,
+    flex: 1,
+    minHeight: 18,
+    backgroundColor: "#d9d4c8",
+  },
   techniqueCard: {
     flex: 1,
-    minHeight: 158,
-    borderRadius: 18,
+    minHeight: 140,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: colors.line,
     backgroundColor: colors.paper,
-    padding: 18,
+    padding: 15,
+    marginBottom: 10,
     ...shadow,
   },
   cardTop: { flexDirection: "row", justifyContent: "space-between", gap: 8 },
@@ -686,9 +802,9 @@ const styles = StyleSheet.create({
   },
   techniqueTitle: {
     color: colors.ink,
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "800",
-    marginTop: 13,
+    marginTop: 11,
   },
   techniqueText: {
     color: colors.muted,
@@ -696,7 +812,7 @@ const styles = StyleSheet.create({
     lineHeight: 17,
     marginTop: 5,
   },
-  meta: { flexDirection: "row", alignItems: "center", marginTop: 15 },
+  meta: { flexDirection: "row", alignItems: "center", marginTop: 12 },
   metaText: { color: colors.muted, fontSize: 9 },
   mastered: {
     color: colors.purple,
@@ -798,11 +914,13 @@ const styles = StyleSheet.create({
   whyTitle: { color: colors.ink, fontSize: 11, fontWeight: "800" },
   whyText: { color: colors.muted, fontSize: 10, lineHeight: 15, marginTop: 3 },
   masterButton: {
+    width: "100%",
     minHeight: 50,
     borderRadius: 12,
     backgroundColor: colors.ink,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 18,
   },
   skipButton: { minHeight: 42, alignItems: "center", justifyContent: "center" },
   skipText: { color: colors.muted, fontSize: 11, fontWeight: "700" },
@@ -813,7 +931,15 @@ const styles = StyleSheet.create({
     padding: 24,
     backgroundColor: "rgba(20,19,17,.78)",
   },
-  confetti: { position: "absolute", top: 90, color: colors.lime, fontSize: 24 },
+  confettiLayer: {
+    position: "absolute",
+    width: 12,
+    height: 12,
+    top: "34%",
+    left: "50%",
+    zIndex: 2,
+  },
+  confettiPiece: { position: "absolute", fontSize: 17, fontWeight: "900" },
   celebrationCard: {
     width: "100%",
     maxWidth: 390,
